@@ -13,7 +13,7 @@ pub enum CssToken {
     OpenCurly,
     CloseCurly,
     Ident(String),
-    StrintToken(String),
+    StringToken(String),
     AtKeyword(String),
 }
 
@@ -125,7 +125,7 @@ impl Iterator for CssTokenizer {
                 }
                 '"' | '\'' => {
                     let value = self.consume_string_token();
-                    CssToken::StrintToken(value)
+                    CssToken::StringToken(value)
                 }
                 '0'..='9' => {
                     let t = CssToken::Number(self.consume_numeric_token());
@@ -250,7 +250,7 @@ mod tests {
             CssToken::OpenCurly,
             CssToken::Ident("content".to_string()),
             CssToken::Colon,
-            CssToken::StrintToken("Hey".to_string()),
+            CssToken::StringToken("Hey".to_string()),
             CssToken::Semicolon,
             CssToken::CloseCurly,
             CssToken::Ident("h1".to_string()),
