@@ -93,6 +93,55 @@ impl ComputedStyle {
             .clone()
             .expect("failed to access CSS property: width")
     }
+
+    pub fn defaulting(&mut self, node: &Rc<RefCell<Node>>, parent_style: Option<ComputedStyle>) {
+        if let Some(parent_style) = parent_style {
+            if self.background_color.is_none() && parent_style.background_color() != Color::white()
+            {
+                self.background_color = Some(parent_style.background_color());
+            }
+            if self.color.is_none() && parent_style.color() != Color::black() {
+                self.color = Some(parent_style.color());
+            }
+            if self.font_size.is_none() && parent_style.font_size() != FontSize::Medium {
+                self.font_size = Some(parent_style.font_size());
+            }
+            if self.text_decoration.is_none()
+                && parent_style.text_decoration() != TextDecoration::None
+            {
+                self.text_decoration = Some(parent_style.text_decoration());
+            }
+        }
+
+        // 各プロパティに対して、初期値を設定する
+        if self.background_color.is_none() {
+            self.background_color = Some(Color::white());
+        }
+
+        if self.color.is_none() {
+            self.color = Some(Color::black());
+        }
+
+        if self.display.is_none() {
+            self.display = Some(DisplayType::deault(node));
+        }
+
+        if self.font_size.is_none() {
+            self.font_size = Some(FontSize::default(node));
+        }
+
+        if self.text_decoration.is_none() {
+            self.text_decoration = Some(TextDecoration::default(node));
+        }
+
+        if self.height.is_none() {
+            self.height = Some(0);
+        }
+
+        if self.width.is_none() {
+            self.width = Some(0);
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -199,16 +248,16 @@ impl Color {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum FontSize {
     Medium,
-    Large,
     XLarge,
+    XXLarge,
 }
 
 impl FontSize {
     fn default(node: &Rc<RefCell<Node>>) -> Self {
         match &node.borrow().kind() {
             NodeKind::Element(element) => match element.kind() {
-                ElementKind::H1 => FontSize::XLarge,
-                ElementKind::H2 => FontSize::Large,
+                ElementKind::H1 => FontSize::XXLarge,
+                ElementKind::H2 => FontSize::XLarge,
                 _ => FontSize::Medium,
             },
             _ => FontSize::Medium,

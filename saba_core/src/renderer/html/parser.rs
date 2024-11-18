@@ -121,6 +121,7 @@ impl HtmlParser {
                                 self.insert_element(tag, attributes.to_vec());
                                 self.oritinal_insertion_mode = self.mode;
                                 self.mode = InsertionMode::Text;
+                                token = self.t.next();
                                 continue;
                             }
                             if tag == "body" {
